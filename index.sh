@@ -11,4 +11,4 @@ else
   sed -i -e :a -e '/^\n*$/{$d;N;};/\n$/ba' "$tempfile"
 fi
 
-nvim -n + "$tempfile" && rm "$tempfile"
+nvim -n -c "setlocal buftype=nofile" + "$tempfile" && rm "$tempfile"
