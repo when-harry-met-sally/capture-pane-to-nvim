@@ -1,14 +1,28 @@
 #!/usr/bin/env bash
 
-pane_id=$1
-tempfile=$(mktemp)
-
-tmux capture-pane -pS -2000 -t "$pane_id" | sed 's/[[:space:]]*$//' > "$tempfile"
-
-if [[ "$OSTYPE" == "darwin"* ]]; then
-  sed -i '' -e :a -e '/^\n*$/{$d;N;};/\n$/ba' "$tempfile"
-else
-  sed -i -e :a -e '/^\n*$/{$d;N;};/\n$/ba' "$tempfile"
+# Get the ID of the current pane
+pane_id=$(tmux display-message -p '#{pane_id}')
+if [[ -z "$pane_id" ]]; then
+  echo "Error: Could not fetch the current tmux pane."
+  exit 1
 fi
 
-nvim -n -c "setlocal buftype=nofile" + "$tempfile" && rm "$tempfile"
+# Capture the pane's output
+capture_output=$(tmux capture-pane -pS -2000 -t "$pane_id" 2>/dev/null)
+if [[ $? -ne 0 ]]; then
+  echo "Error: Failed to capture pane. Make sure the current pane is valid."
+  exit 1
+fi
+
+# Process the captured output to remove trailing spaces
+cleaned_output=$(echo "$capture_output" | sed 's/[[:space:]]*$//')
+
+# Remove any blank lines at the end
+final_output=$(echo "$cleaned_output" | sed -e :a -e '/^\n*$/{$d;N;};/\n$/ba')
+
+# Open the processed output in nvim in a temporary nofile buffer
+if [[ -n "$final_output" ]]; then
+  echo "$final_output" | nvim -n -c "setlocal buftype=nofile" -
+else
+  echo "Warning: The captured pane is empty or has no output after processing."
+fi
