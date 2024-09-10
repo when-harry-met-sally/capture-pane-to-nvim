@@ -13,6 +13,7 @@
 
       # Set the default package for the system
       defaultPackage = pkgs.writeShellScriptBin "capture-pane-to-nvim" ''
+        export TMUX_BIN="${pkgs.tmux}/bin/tmux"
         ${./index.sh}
       '';
     }

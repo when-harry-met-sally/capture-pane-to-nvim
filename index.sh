@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
 
-# Get the ID of the current pane
-pane_id=$(tmux display-message -p '#{pane_id}')
+tmux_bin=${TMUX_BIN:-tmux}
+
+pane_id=$("$tmux_bin" display-message -p '#{pane_id}')
 if [[ -z "$pane_id" ]]; then
   echo "Error: Could not fetch the current tmux pane."
   exit 1
 fi
 
 # Capture the pane's output
-capture_output=$(tmux capture-pane -pS -2000 -t "$pane_id" 2>/dev/null)
+capture_output=$("$tmux_bin" capture-pane -pS -2000 -t "$pane_id" 2>/dev/null)
 if [[ $? -ne 0 ]]; then
   echo "Error: Failed to capture pane. Make sure the current pane is valid."
   exit 1
