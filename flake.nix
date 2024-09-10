@@ -13,8 +13,7 @@
 
       # Set the default package for the system
       defaultPackage = pkgs.writeShellScriptBin "capture-pane-to-nvim" ''
-        DATE="$(${pkgs.ddate}/bin/ddate +'the %e of %B%, %Y')"
-        ${pkgs.cowsay}/bin/cowsay Hello, world! Today is $DATE.
+        ${./index.sh}
       '';
     }
   );
