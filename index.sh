@@ -23,7 +23,7 @@ final_output=$(echo "$cleaned_output" | sed -e :a -e '/^\n*$/{$d;N;};/\n$/ba')
 
 # Open the processed output in nvim in a temporary nofile buffer
 if [[ -n "$final_output" ]]; then
-  echo "$final_output" | nvim -n -c "setlocal buftype=nofile" -
+  echo "$final_output" | nvim -n -c "setlocal buftype=nofile" -c "normal! G" -
 else
   echo "Warning: The captured pane is empty or has no output after processing."
 fi
